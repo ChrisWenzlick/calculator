@@ -1,6 +1,7 @@
-let firstNumber = 0;
-let secondNumber = 0;
-let operator = "";
+let firstNumber = null;
+let secondNumber = null;
+let result = null;
+let selectedOperator = "";
 let displayValue = "";
 
 const displayContainer = document.querySelector(".display");
@@ -37,9 +38,40 @@ const divide = function(left, right) {
     return left / right;
 }
 
-const updateDisplay = function(newInput) {
-    displayValue += newInput;
+const updateDisplay = function(newValue) {
     displayContainer.textContent = displayValue;
+}
+
+const selectOperator = function(value) {
+    selectedOperator = value;
+    firstNumber = Number(displayValue);
+    operator = value;
+    displayValue = "";
+}
+
+const submitOperation = function() {
+    if(firstNumber === null) {
+        return;
+    } else {
+        secondNumber = Number(displayValue);
+        result = operate(selectedOperator, firstNumber, secondNumber);
+    }
+
+    displayValue = result;
+    updateDisplay();
+
+    // Reset for next operation
+    displayValue = "";
+    firstNumber = null;
+}
+
+const clearData = function() {
+    firstNumber = 0;
+    secondNumber = 0;
+    result = 0;
+    operator = "";
+    displayValue = "";
+    displayContainer.textContent = "0";
 }
 
 const onButtonPressed = function(value) {
@@ -54,7 +86,26 @@ const onButtonPressed = function(value) {
         case "7":
         case "8":
         case "9":
-            updateDisplay(value);
+            displayValue += value;
+            updateDisplay();
+            break;
+        case ".":
+            if(!displayValue.includes(".")) {
+                displayValue += value;
+                updateDisplay();
+            }
+            break;
+        case "+":
+        case "-":
+        case "*":
+        case "/":
+            selectOperator(value);
+            break;
+        case "=":
+            submitOperation();
+            break;
+        case "C":
+            clearData();
             break;
         default:
             break;
